@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Dhanush - Cyberpunk AI Interface</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;600;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+  <!-- Prism.js Cyberpunk Code Styling -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css?v=2">
+</head>
+<body class="cyber-theme">
+  <!-- Interactive Animated Cyberpunk Background -->
+  <div class="cyber-bg-overlay"></div>
+  <div class="cyber-grid"></div>
+
+  <!-- Client-side Browser Safeguard checks -->
+  <script>
+    window.addEventListener('error', function(event) {
+      showSystemCrash(event.message || 'Script loading error');
+    });
+    
+    // Check protocol block constraint
+    if (window.location.protocol === 'file:') {
+      document.addEventListener("DOMContentLoaded", function() {
+        showSystemCrash("⚠️ PROTOCOL_CORS_LIMITATION: You opened this file directly from the filesystem (file://).\\nModern browsers block script modules over file:// for safety.\\n\\nTo run locally, please use a local server (e.g. VS Code Live Server extension, or python -m http.server).\\nOnce uploaded to GitHub Pages, this warning will disappear and it will run perfectly!");
+      });
+    }
+
+    function showSystemCrash(msg) {
+      var banner = document.getElementById("cyberSystemCrashBanner");
+      if (!banner) {
+        banner = document.createElement("div");
+        banner.id = "cyberSystemCrashBanner";
+        banner.style = "position:fixed;top:0;left:0;width:100%;background:linear-gradient(90deg, #ff007c 0%, #8800ff 100%);color:#fff;padding:16px 24px;z-index:999999;font-family:'Fira Code',monospace;font-size:11px;box-shadow:0 4px 20px rgba(255,0,124,0.4);white-space:pre-wrap;border-bottom:2px solid #00f3ff;";
+        document.body.appendChild(banner);
+      }
+      banner.innerHTML = "🚨 <strong>[CRITICAL_SYSTEM_EXCEPTION]</strong><br>" + msg;
+    }
+  </script>
+
+  <div class="app-layout">
+    <!-- Collapsible Sidebar (Left Panel) -->
+    <aside class="sidebar active" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand">
+          <i class="fa-solid fa-microchip neon-text-cyan"></i>
+          <span>DHANUSH <span class="accent-sub">OS v1.0</span></span>
+        </div>
+        <button class="sidebar-close-btn" id="sidebarCloseBtn" title="Close Panel">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+      </div>
+
+      <!-- New Chat Button -->
+      <div class="sidebar-actions">
+        <button class="btn btn-primary btn-glow" id="newChatBtn">
+          <i class="fa-solid fa-plus-circle"></i>
+          <span>NEW SESSION</span>
+        </button>
+      </div>
+
+      <!-- Chat History -->
+      <div class="history-section">
+        <span class="section-title">CHANNELS & ARCHIVES</span>
+        <div class="chat-list" id="chatList">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Sidebar Footer Settings -->
+      <div class="sidebar-footer">
+        <div class="status-panel">
+          <div class="status-item">
+            <span class="status-label">CORE SYSTEM:</span>
+            <span class="status-val status-ok">ONLINE</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">AI ENGINE:</span>
+            <span class="status-val neon-text-cyan">GEMINI 2.5 FLASH</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">SHELL COMMS:</span>
+            <span class="status-val status-ok">SECURE</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Chat Workspace -->
+    <main class="main-content">
+      <!-- Top Navigation Bar -->
+      <header class="top-navbar">
+        <div class="top-nav-left">
+          <button class="sidebar-toggle-btn" id="sidebarToggleBtn" title="Toggle Sidebar">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="active-session-title" id="activeSessionTitle">INITIAL_HANDSHAKE_SESSION</div>
+        </div>
+        <div class="top-nav-right">
+          <div class="cyber-badge" id="activeEngineBadge">
+            <span class="badge-dot pulse"></span>
+            <span class="badge-text">GEMINI_AI_CORE_CONNECTED</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Chat Screen Panel -->
+      <div class="chat-viewport">
+        <div class="chat-container">
+          <!-- Welcoming Screen / Empty State -->
+          <div class="chat-welcome-state" id="welcomeState">
+            <!-- WOW Factor centerpiece Core Orb -->
+            <div class="core-orb-outer">
+              <div class="core-orb state-idle" id="coreOrb">
+                <div class="orb-ring ring-1"></div>
+                <div class="orb-ring ring-2"></div>
+                <div class="orb-ring ring-3"></div>
+                <div class="orb-center">
+                  <svg viewBox="0 0 100 100" class="orb-svg">
+                    <defs>
+                      <radialGradient id="orbGradient" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#00f3ff" stop-opacity="0.95"/>
+                        <stop offset="45%" stop-color="#8000ff" stop-opacity="0.6"/>
+                        <stop offset="85%" stop-color="#050814" stop-opacity="0.1"/>
+                        <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+                      </radialGradient>
+                    </defs>
+                    <!-- Cyan neon particle path circles -->
+                    <circle cx="50%" cy="50%" r="35" fill="none" class="orb-dashed-circle circle-1" stroke="#00f3ff" stroke-width="1" stroke-dasharray="8 8"/>
+                    <circle cx="50%" cy="50%" r="28" fill="none" class="orb-dashed-circle circle-2" stroke="#8000ff" stroke-width="1" stroke-dasharray="5 5"/>
+                    <circle cx="50%" cy="50%" r="20" fill="url(#orbGradient)" class="orb-inner-core"/>
+                  </svg>
+                  
+                  <!-- Soundwave Equalizer for Typing state -->
+                  <div class="orb-visualizer" id="orbVisualizer">
+                    <span class="bar bar-1"></span>
+                    <span class="bar bar-2"></span>
+                    <span class="bar bar-3"></span>
+                    <span class="bar bar-4"></span>
+                    <span class="bar bar-5"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="welcome-text-group">
+              <h1 class="neon-glitch-title" data-text="AGENT DHANUSH">AGENT DHANUSH</h1>
+              <p class="cyber-subtitle">NEURAL COGNITIVE DECENTRALIZED AI CHAT SYSTEM</p>
+              <div class="terminal-handshake">
+                <span class="term-prompt">&gt;</span> <span class="term-text" id="terminalGreeting">SYSTEM ONLINE. ESTABLISHING ENCRYPTED SHELL CONNECTIVITY...</span>
+              </div>
+            </div>
+
+            <!-- Suggestion Grid -->
+            <div class="suggestions-grid">
+              <div class="suggestion-card glass-panel" data-prompt="Design a responsive cyberpunk visual interface layout using pure HTML/CSS.">
+                <i class="fa-solid fa-code text-cyan"></i>
+                <h3>Write Cyberpunk Code</h3>
+                <p>Request code blocks with instant dark themes.</p>
+              </div>
+              <div class="suggestion-card glass-panel" data-prompt="What makes Google Gemini 1.5 Flash an advanced generative model?">
+                <i class="fa-solid fa-bolt text-purple"></i>
+                <h3>Gemini AI Features</h3>
+                <p>Learn about multi-modal inputs and context window speed.</p>
+              </div>
+              <div class="suggestion-card glass-panel" data-prompt="Compose a short sci-fi story about a rogue AI core named Dhanush.">
+                <i class="fa-solid fa-user-astronaut text-cyan"></i>
+                <h3>Sci-Fi Story Generator</h3>
+                <p>Generate creative stories detailing digital singularity.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Messages Stream (Scrolling view) -->
+          <div class="messages-stream" id="messagesStream" style="display: none;">
+            <!-- Rendered programmatically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating Input Console Bar -->
+      <footer class="input-console-wrapper">
+        <div class="chat-input-bar glass-panel">
+          <button class="console-btn mic-btn" id="micBtn" title="Speak to Dhanush (Speech-to-Text)">
+            <i class="fa-solid fa-microphone" id="micIcon"></i>
+          </button>
+          
+          <div class="input-area-inner">
+            <textarea id="chatInput" placeholder="Feed query into AI stream..." rows="1"></textarea>
+          </div>
+
+          <button class="console-btn send-btn btn-glow" id="sendBtn" title="Transmit Query">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </div>
+        <div class="console-bottom-meta">
+          <span>SECURE QUANTUM COMMS SHELL</span>
+          <span class="meta-separator">•</span>
+          <span>LATENCY: <span id="pingValue">--</span>ms</span>
+          <span class="meta-separator">•</span>
+          <span id="speechLanguage">SPEECH LANGUAGE: EN-US</span>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <!-- CDN Dependencies -->
+  <!-- Marked.js (Markdown Engine) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <!-- Prism.js (Syntax Highlighting Engine) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <!-- Prism.js language autoload capability -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  <!-- Application Entry Script -->
+  <script type="module" src="app.js?v=2"></script>
+</body>
+</html>
